@@ -9,10 +9,9 @@ def index(email):
 
     if len(endereco) != 2:
         logs.append("O e-mail deve ter apenas um @")
-    else:
-        if endereco[1].find(".")  == -1 :
+    if endereco[1].find(".")  == -1 :
             logs.append("O e-mail deve ter pelo menos um . após o arroba")
-        if endereco[1].find(".") == 0:
+    if endereco[1].find(".") == 0:
             logs.append("Deve haver algum caractere entre o @ e o .")
 
 

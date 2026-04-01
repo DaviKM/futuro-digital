@@ -34,7 +34,7 @@ def senha(senha: str):
         return "Senha incorreta. Tente novamente"
 
 
-@app.get("/validar/")
+@app.get("/validar/{idade}/{classificacao}")
 def validar(idade:int, classificacao:int):
     idade = int(idade)
     if idade >= classificacao:
@@ -76,11 +76,20 @@ def classificar(fruta: str):
         return "O morango na verdade não é uma fruta e sim um pseudofruto!"
     return "Não conheço essa fruta, mas tenho certeza que é deliciosa!"
 
-@app.get("/bissexto/")
+@app.get("/bissexto/{ano}")
 def calcular_ano_bissexto(ano:int):
     if ano % 4 == 0 and ano % 100 != 0 or ano % 400 == 0:
         return f"{ano} é um ano bissexto!"
-    return f"({ano} não é um ano bissexto)"
+    return f"{ano} não é um ano bissexto"
+
+@app.get("/calcular-desconto/{valor}/{cupom}")
+def calcular_desconto(valor:float, cupom:str):
+    if cupom == "DESCONTO10":
+        return f"Novo valor com o desconto de 10% -> R${valor - (valor*0.1):.2f}"
+    elif cupom == "DESCONTO20":
+        return f"Novo valor com o desconto de 20% -> R${valor - (valor*0.2):.2f}"
+    else:
+        return f"Valor final sem desconto -> {valor}"
 
 if __name__ == "__main__":
     uvicorn.run("exercicios-fastapi:app", port=8080, reload=True)
