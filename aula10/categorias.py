@@ -94,7 +94,7 @@ def adicionar_item_pedido(email, id_pedido, item, valor:float):
         "nome": item,
         "valor": valor
     }
-    # AO INVES DE PASSAR UMA STRING TEM QUE SER O OBJETO
+    # AO INVES DE PASSAR UMA STRING TEM QUE SER O OBJETO    
     if email in clientes and id_pedido in clientes[email]['pedidos'] :
         clientes[email]['pedidos'][id_pedido].append(produto)
         return clientes[email]['pedidos']

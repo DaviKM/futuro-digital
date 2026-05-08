@@ -4,7 +4,7 @@ from sqlalchemy import create_engine, text
 
 app = FastAPI()
 
-# postgresql://usuario:senha@servidor:porta/banco    padrão
+# postgresql://usuario:senha@servidor:porta/banco   padrão
 DATABASE_URL = 'postgresql://postgres:123@localhost:5432/lojinha'
 
 
@@ -70,6 +70,45 @@ def atualizar(nome, valor, categoria, id):
         return erro
     engine.dispose()
     return 'atualizado'
+
+@app.get("/buscar/{id}")
+def buscar(id : int):
+    engine = create_engine(DATABASE_URL)
+    try:
+        with engine.begin() as conn:
+            sql = f"SELECT id_produto,nome,preco FROM public.produto WHERE id_produto = :id"
+            dados = {
+                'id': id
+            }
+
+            result = conn.execute(text(sql), dados)
+            prod = result.fetchone()
+            return prod._mapping #atalho
+    except Exception as e:
+        return e
+
+@app.get("/listar")
+def listar():
+    engine = create_engine(DATABASE_URL)
+    try:
+        with engine.begin() as conn:
+            sql = "SELECT id_produto, nome, preco FROM public.produto"
+            result = conn.execute(text(sql))
+            linhas = result.fetchall()
+
+            produtos = []
+
+            for linha in linhas:
+                #row = linha._mapping
+                produto = {
+                    'id': linha[0], #'id': row['id_produto']
+                    'nome': linha[1],
+                    'valor': linha[2]
+                }
+                produtos.append(produto)
+            return produtos
+    except Exception as e:
+        return e
 
 @app.get("/")
 def index():
