@@ -167,7 +167,7 @@ def inscricao_maratona(nome, distancia, cpf, tempo_estimado):
     if len(nome.split(' ')) < 2:
         log.append("O nome deve conter um sobrenome")
 
-    if distancia not in distancias:
+    if int(distancia) not in distancias:
         # t erminar
         log.append("A distância deve ser uma das seguintes: 5, 10, 21 ou 42 km")
 
@@ -184,6 +184,10 @@ def inscricao_maratona(nome, distancia, cpf, tempo_estimado):
             'tempo_estimado': tempo_estimado,
         }
         return "Inscrição realizada com sucesso!"
+
+@app.get("/postar-blog")
+def postar_blog(titulo, conteudo, autor, quant_tags):
+    log = []
 
 @app.get("/ver-inscricao")
 def ver_inscricao():
