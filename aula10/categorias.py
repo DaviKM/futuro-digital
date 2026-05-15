@@ -6,12 +6,13 @@ app = FastAPI()
 loja = {
     'categorias': {},
     'depositos': {},
-    'cliente': {}
+    'cliente': {},
+    'cupons': []
 }
 categorias = loja['categorias']
 depositos = loja['depositos']
 clientes = loja['cliente']
-
+cupons = loja['cupons']
 
 @app.get("/cadastrar-categoria")
 def cadastrar_categoria(nome):
@@ -99,6 +100,23 @@ def adicionar_item_pedido(email, id_pedido, item, valor:float):
         clientes[email]['pedidos'][id_pedido].append(produto)
         return clientes[email]['pedidos']
     return 'Email ou pedido não existe'
+
+@app.get('/criar-cupom')
+def criar_cupom(codigo, desconto):
+    codigo = codigo.upper()
+    try:
+        desconto = float(desconto)
+        if not (0 < desconto < 100):
+            return 'Desconto deve ser entre 0% e 100%'
+    except:
+        return 'O desconto deve ser um número'
+    cupom = {
+        'codigo': codigo,
+        'desconto': desconto
+    }
+    cupons.append(cupom)
+    return cupom
+
 @app.get("/")
 def ver_loja():
     return loja

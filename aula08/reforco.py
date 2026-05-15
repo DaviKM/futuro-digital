@@ -7,7 +7,7 @@ curriculos = {}
 produtos = {}
 usuarios = {}
 inscritos = {}
-
+posts = []
 @app.get("/curriculo")
 # Validações:
 # O nome deve ter no mínimo 3 caracteres.
@@ -185,12 +185,41 @@ def inscricao_maratona(nome, distancia, cpf, tempo_estimado):
         }
         return "Inscrição realizada com sucesso!"
 
-@app.get("/postar-blog")
-def postar_blog(titulo, conteudo, autor, quant_tags):
-    log = []
-
 @app.get("/ver-inscricao")
 def ver_inscricao():
     return inscritos
+
+@app.get("/postar-blog")
+def postar_blog(titulo, conteudo, autor, quant_tags):
+    log = []
+    titulo = titulo.strip()
+    conteudo = conteudo.strip()
+    try:
+        quant_tags = int(quant_tags)
+    except:
+        log.append("A quantidade deve ser um inteiro")
+    if 10 > len(titulo) or len(titulo) > 100:
+        log.append("O título deve ter entre 10 e 100 caracteres.")
+    if len(conteudo) < 200:
+        log.append("O conteúdo deve ter no mínimo 200 caracteres.")
+    for c in autor:
+        if c.isdigit():
+            log.append("O nome do autor não pode conter números.")
+            break
+    if 1 > quant_tags or quant_tags > 5:
+        log.append("A quantidade de tags deve ser entre 1 e 5.")
+
+    if len(log) > 0:
+        return log
+    else:
+        post = {
+            'titulo': titulo,
+            'conteudo': conteudo,
+            'autor': autor,
+            'quant_tags': quant_tags,
+        }
+        posts.append(post)
+
+        return posts
 if __name__ == "__main__":
     uvicorn.run("reforco:app", port=8001, reload=True)
