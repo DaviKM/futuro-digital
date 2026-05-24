@@ -1,11 +1,10 @@
-import uvicorn
-from fastapi import FastAPI
+from fastapi import APIRouter
 from sqlalchemy import create_engine, text
 
-app = FastAPI()
+router = APIRouter(prefix="/cliente", tags=["Clientes"])
 DATABASE_URL = 'postgresql://postgres:123@localhost:5432/loja'
 
-@app.get("/cadastrar-cliente")
+@router.get("/cadastrar")
 def cadastrar_cliente(nome, email, cidade):
     engine = create_engine(DATABASE_URL)
 
@@ -21,6 +20,3 @@ def cadastrar_cliente(nome, email, cidade):
             return 'Cliente cadastrado com sucesso!'
     except Exception as erro:
         return erro
-
-if __name__ == "__main__":
-    uvicorn.run("loja:app", port=16000, reload=True)

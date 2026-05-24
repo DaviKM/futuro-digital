@@ -7,17 +7,19 @@ loja = {
     'categorias': {},
     'depositos': {},
     'cliente': {},
-    'cupons': []
+    'cupons': {},
+    'fornecedores': {}
 }
 categorias = loja['categorias']
 depositos = loja['depositos']
 clientes = loja['cliente']
 cupons = loja['cupons']
+fornecedores = loja['fornecedores']
 
 @app.get("/cadastrar-categoria")
 def cadastrar_categoria(nome):
     if nome not in categorias:
-        categorias[nome] = []
+        categorias[nome] = {}
         return "Categoria criada"
     return "Categoria já existe"
 
@@ -28,11 +30,11 @@ def adicionar_produto(nome, categoria, preco: float):
         return "Categoria não existe"
     produto = {
         "nome": nome.strip(),
-        "preco:": preco
+        "preco": preco
     }
 
     lista = categorias[categoria]
-    lista.append(produto)
+    lista[produto['nome']] = produto
     return produto
 
 
@@ -114,9 +116,57 @@ def criar_cupom(codigo, desconto):
         'codigo': codigo,
         'desconto': desconto
     }
-    cupons.append(cupom)
+    cupons[codigo] = cupom
     return cupom
 
+@app.get('/aplicar-cupom-produto')
+def aplicar_cupom(categoria, nome_produto, codigo_cupom):
+    codigo_cupom = codigo_cupom.upper()
+    if categoria in categorias:
+        if nome_produto in categorias[categoria]:
+            if codigo_cupom in cupons:
+                desconto = cupons[codigo_cupom]['desconto']
+                valor = categorias[categoria][nome_produto]['preco']
+                categorias[categoria][nome_produto]['preco'] = valor - valor * desconto/100
+                return categorias[categoria][nome_produto]
+
+    return "Valores inválidos"
+
+@app.get('/registrar-fornecedor')
+def registrar_fornecedor(cnpj, nome_empresa):
+    fornecedor = {
+        "cnpj": cnpj,
+        "nome_empresa": nome_empresa,
+        'catalogo': {}
+    }
+    fornecedores[cnpj] = fornecedor
+    return fornecedor
+
+@app.get('/adicionar-ao-catalogo')
+def adicionar_ao_catalogo(cnpj, nome_item, modelo):
+    item = {
+        "nome_item": nome_item,
+        "modelo": modelo,
+        "detalhes": {}
+    }
+    if cnpj in fornecedores:
+        fornecedores[cnpj]['catalogo'][nome_item] = item
+        return item
+    else:
+        return 'Fornecedor não existe'
+
+@app.get('/adicionar-especificacao')
+def adicionar_especificacao(cnpj, nome_item, chave, valor):
+    especificacao = {
+        chave: valor
+    }
+    if cnpj not in fornecedores:
+        return "Fornecedor inválido"
+    if nome_item not in fornecedores[cnpj]['catalogo']:
+        return 'Item inválido'
+    fornecedores[cnpj]['catalogo'][nome_item]['detalhes'][chave] = []
+    fornecedores[cnpj]['catalogo'][nome_item]['detalhes'][chave].append(especificacao)
+    return especificacao
 @app.get("/")
 def ver_loja():
     return loja
