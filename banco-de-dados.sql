@@ -292,7 +292,7 @@ INSERT INTO public.marcas VALUES ('TechMaster', 'Estados Unidos', 1);
 INSERT INTO public.marcas VALUES ('CasaPlus', 'Alemanha', 2);
 INSERT INTO public.marcas VALUES ('SoundBeat', 'Japão', 3);
 INSERT INTO public.marcas VALUES ('StyleWear', 'Brasil', 4);
-
+INSERT INTO public.marcas VALUES ('MegaFood', 'Estados Unidos', 5);
 
 --
 -- TOC entry 3498 (class 0 OID 16404)
