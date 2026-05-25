@@ -5,7 +5,7 @@ from sqlalchemy import create_engine, text
 app = FastAPI()
 
 # postgresql://usuario:senha@servidor:porta/banco   padrão
-DATABASE_URL = 'postgresql://postgres:123@localhost:5432/lojinha'
+DATABASE_URL = 'postgresql://postgres:123@localhost:5432/loja'
 
 
 @app.get("/cadastrar")
@@ -91,22 +91,16 @@ def buscar(id : int):
 def listar():
     engine = create_engine(DATABASE_URL)
     try:
-        with engine.begin() as conn:
-            sql = "SELECT id_produto, nome, preco FROM public.produto"
+        with engine.connect() as conn:
+            sql = "SELECT id, nome_produto, preco, estoque, marca_id FROM public.produtos"
             result = conn.execute(text(sql))
             linhas = result.fetchall()
 
             produtos = []
 
             for linha in linhas:
-                #row = linha._mapping
-                produto = {
-                    'id': linha[0], #'id': row['id_produto']
-                    'nome': linha[1],
-                    'valor': linha[2]
-                }
-                produtos.append(produto)
-            return produtos
+                produtos.append(linha._mapping)
+            return linhas._mapping
     except Exception as e:
         return e
 
