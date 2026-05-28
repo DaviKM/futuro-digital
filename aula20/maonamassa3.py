@@ -5,7 +5,7 @@ DATABASE_URL = 'postgresql://postgres:123@localhost/loja'
 
 router = APIRouter()
 
-@router.get('/M2')
+@router.get('/M1')
 def m1():
     engine = create_engine(DATABASE_URL)
 
@@ -65,6 +65,50 @@ def m3():
                 result_row = {
                     "Nome do produto:": row[0],
                     "Total pago": row[1],
+                }
+                result.append(result_row)
+            return result
+    except Exception as e:
+        return e
+    
+@router.get("/M4")
+def m4():
+    engine = create_engine(DATABASE_URL)
+
+    try:
+        with engine.connect() as con:
+            sql = """SELECT m.nome_marca, c.nome_cliente
+                     FROM marcas m JOIN produtos p ON m.id = p.marca_id 
+                     JOIN itens_compra ic ON p.id = ic.produto_id 
+                     JOIN pedidos pe ON ic.pedido_id = pe.id 
+                     JOIN clientes c ON pe.cliente_id = c.id  ;"""
+            rows = con.execute(text(sql))
+            result = []
+            for row in rows:
+                result_row = {
+                    "Nome da marca": row[0],
+                    "Nome do cliente": row[1]
+                }
+                result.append(result_row)
+            return result
+    except Exception as e:
+        return e
+    
+
+@router.get("/M5")
+def m5():
+    engine = create_engine(DATABASE_URL)
+
+    try:
+        with engine.connect() as con:
+            sql = """SELECT c.nome_cliente 
+                     FROM clientes c LEFT JOIN pedidos p ON c.id = p.cliente_id 
+                     WHERE p.id IS NULL;"""
+            rows = con.execute(text(sql))
+            result = []
+            for row in rows:
+                result_row = {
+                    "Nome do cliente": row[0]
                 }
                 result.append(result_row)
             return result
