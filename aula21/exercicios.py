@@ -9,7 +9,7 @@ app = FastAPI()
 @app.get('/J-G1')
 def jg1():
     engine = create_engine(DATABASE_URL)
-
+    # Testeee
     try:
         with engine.connect() as con:
             sql = """SELECT c.nome_cliente, p.data_pedido
