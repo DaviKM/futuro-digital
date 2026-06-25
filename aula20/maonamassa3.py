@@ -113,3 +113,51 @@ def m5():
             return result
     except Exception as e:
         return e
+    
+@router.get("/M6")
+def m6():
+    engine = create_engine(DATABASE_URL)
+
+    try:
+        with engine.connect() as con:
+            sql = """SELECT p.nome_produto, SUM(ic.quantidade) AS total_vendido 
+                     FROM produtos p LEFT JOIN itens_compra ic 
+                     ON p.id = ic.produto_id 
+                     GROUP BY p.nome_produto ; """
+            rows = con.execute(text(sql))
+            result = []
+            for row in rows:
+                result_row = {
+                    "Nome do produto": row[0],
+                    "Total vendido": row[1]
+                }
+                result.append(result_row)
+            return result
+    except Exception as e:
+        return e
+
+@router.get("/M7")
+def m7():
+    engine = create_engine(DATABASE_URL)
+
+    try:
+        with engine.connect() as con:
+            sql = """SELECT m.nome_marca, p.nome_produto
+                     FROM produtos p RIGHT JOIN marcas m
+                     ON p.marca_id = m.id
+                     WHERE p.preco = (SELECT MAX(preco) 
+                                      FROM produtos pp WHERE pp.marca_id = m.id 
+                                      GROUP BY m.nome_marca) ;"""
+            
+            rows = con.execute(text(sql))
+            result = []
+            for row in rows:
+                result_row = {
+                    "Nome do produto": row[0],
+                    "Total vendido": row[1]
+                }
+                result.append(result_row)
+            return result
+    except Exception as e:
+        return e
+
