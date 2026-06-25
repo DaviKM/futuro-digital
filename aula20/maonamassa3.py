@@ -4,7 +4,6 @@ from sqlalchemy import create_engine, text
 DATABASE_URL = 'postgresql://postgres:123@localhost/loja'
 
 router = APIRouter()
-
 @router.get('/M1')
 def m1():
     engine = create_engine(DATABASE_URL)
